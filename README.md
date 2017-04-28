@@ -1,27 +1,81 @@
+WARNING: currently WIP. API might change
+
 # ember-tinymce
 
-This README outlines the details of collaborating on this Ember addon.
+This ember addon tries to handle the external loading routines that the tinymce editor uses.
 
-## Installation
+Just run `ember install ember-tinymce` and use `{{tinymce-editor value=myHtmlContent}}`.
 
-* `git clone <repository-url>` this repository
-* `cd ember-tinymce`
-* `npm install`
-* `bower install`
+# API
 
-## Running
+## `assetsPrefix`
 
-* `ember serve`
-* Visit your app at [http://localhost:4200](http://localhost:4200).
 
-## Running Tests
+# use cases
 
-* `npm test` (Runs `ember try:each` to test your addon against multiple Ember versions)
-* `ember test`
-* `ember test --server`
+## Override tinymce options
 
-## Building
+1. `{{tinymce-editor options=(hash skin='my-skin')}}`
+2. Create a new component that inherits tinymce-editor
 
-* `ember build`
+## Use custom skin
 
-For more information on using ember-cli, visit [https://ember-cli.com/](https://ember-cli.com/).
+In your `ember-cli-build.js` add code like the following:
+
+```javascript
+/* eslint-env node */
+const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+const funnel = require('broccoli-funnel');
+
+module.exports = function(defaults) {
+  let app = new EmberApp(defaults, {
+    fingerprint: {
+      exclude: ['skins']
+    }
+  });
+
+  let tinymceExtraAssets = funnel('vendor/tinymce/', {
+    destDir: '/assets'
+  });
+
+
+  return app.toTree([tinymceExtraAssets]);
+};
+
+```
+
+Now add your skin to `vendor/tinymce/skins/`.
+
+`{{tinymce-editor options=(hash skin='my-skin')}}`
+
+## Use custom language
+
+In your `ember-cli-build.js` add code like the following:
+
+```javascript
+/* eslint-env node */
+const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+const funnel = require('broccoli-funnel');
+
+module.exports = function(defaults) {
+  let app = new EmberApp(defaults, {
+    fingerprint: {
+      exclude: ['langs']
+    }
+  });
+
+  let tinymceExtraAssets = funnel('vendor/tinymce/', {
+    destDir: '/assets'
+  });
+
+
+  return app.toTree([tinymceExtraAssets]);
+};
+
+```
+
+Now add your language to `vendor/tinymce/langs/`.
+
+`{{tinymce-editor options=(hash language='borg')}}`
+
+
